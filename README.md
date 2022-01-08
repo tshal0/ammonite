@@ -1,2 +1,3 @@
-# ammonite
+# Ammonite
+
 WoW TBC Ammo Manager
