@@ -2,7 +2,7 @@
   "APP_NAME": "Ammonite",
   "INTERFACE": "20501",
   "VERSION": "1.0.0",
-  "BUILD": 12,
+  "BUILD": 13,
   "SRC_DIR": "./src",
   "BUILD_DIR": "./build",
   "WOW_INSTALL_DIR": "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\Interface\\AddOns\\"

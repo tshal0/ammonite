@@ -10,6 +10,7 @@ local LDB = LibStub("LibDataBroker-1.1", true):NewDataObject("Ammonite!", {
   OnClick = function()
     Ammonite:Print("AmmoniteOptionsFrame:Show")
     Ammonite:Print("Version: {{VERSION}}")
+    Ammonite:ShowOptions()
   end
 })
 local LDBIcon = LibStub("LibDBIcon-1.0")
@@ -22,10 +23,12 @@ local defaults = {
     }
   }
 }
+local AceGUI = LibStub("AceGUI-3.0")
+
 function Ammonite:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("AmmoniteDB", defaults)
   LDBIcon:Register("Ammonite!", LDB, self.db.profile.minimap)
-  self:RegisterChatCommand("bunnies", "CommandTheAmmonite")
+  self:RegisterChatCommand("ammonite", "ShowOptions")
   Ammonite:Print("Version: {{VERSION}}")
 end
 function Ammonite:CommandTheAmmonite()
@@ -36,6 +39,9 @@ function Ammonite:CommandTheAmmonite()
     LDBIcon:Show("Ammonite!")
   end
 end
-function Ammonite:OnEnable() end
 
-function Ammonite:OnDisable() end
+function Ammonite:ShowOptions()
+  local frame = AceGUI:Create("Frame")
+  frame:SetTitle("Example Frame")
+  frame:SetStatusText("AceGUI-3.0 Example Container Frame")
+end
