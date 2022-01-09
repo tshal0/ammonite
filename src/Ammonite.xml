@@ -4,18 +4,6 @@
 		<Frames>
 			<Button name="AmmoniteButton" frameStrata="FULLSCREEN" toplevel="true">
 				<Scripts>
-					<OnLoad>
-						Ammonite_OnLoad(self)
-					</OnLoad>
-					<OnShow>
-					
-					</OnShow>
-					<OnHide>
-					</OnHide>
-					<OnEvent>
-					</OnEvent>
-					<OnClick>
-					</OnClick>
 				</Scripts>
 			</Button>
 		</Frames>

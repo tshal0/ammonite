@@ -3,4 +3,10 @@
 ## X-License: All rights reserved.
 ## Notes: This AddOn does nothing
 ## Author: Arazon
-Ammonite.xml
+## SavedVariables: AmmoniteDB
+
+# External code + initialization
+embeds.xml
+
+# Core 
+Ammonite.lua
