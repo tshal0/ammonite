@@ -1,16 +1,37 @@
 # Setup source and destination paths
-$AppName = 'Ammonite'
 
-$Src = './src'
-$Dst = './build'
-$BuildSrc = $Src + '/*'
-$BuildDst = $Dst + '/*'
 
-$WowInstallDir = 'C:\Program Files (x86)\World of Warcraft\_classic_\Interface\AddOns\'
+$Config = Get-Content config.json | ConvertFrom-Json
+
+$AppName = $Config.APP_NAME
+
+$Version = $Config.VERSION
+$Build = $Config.BUILD
+$Interface = $Config.INTERFACE
+$script:Build++ 
+
+$WowInstallDir = $Config.WOW_INSTALL_DIR
+$validInstallDir = $WowInstallDir.EndsWith('Interface\AddOns\')
+if (!$validInstallDir) {
+    Write-Error 'INVALID_WOW_INSTALL_DIR: WoW install directory does not end with Interface\Addons\.'
+    return;
+}
 $WowDst = $WowInstallDir + $AppName
+
+$Version = $Version + '.' + $Build
+
+Write-Host Build: $Version
+
+
+$Src = $Config.SRC_DIR
+$Dst = $Config.BUILD_DIR
 
 $TocFile = $AppName + '.toc'
 $TocPath = $Dst + '/' + $TocFile
+
+$Config.BUILD = $Build
+$Config | ConvertTo-Json | Out-File -FilePath config.json
+
 
 # BUILD 
 
@@ -20,7 +41,8 @@ try {
     if ( $exists) {
         $CleanDst = $Dst + '/*'
         Remove-Item -Recurse -Force $CleanDst
-    } else {
+    }
+    else {
         New-Item -ItemType "directory" -Path $Dst
     }
     # Copy README, CHANGELOG
@@ -30,6 +52,7 @@ try {
         Copy-Item -Path $item.FullName -Destination $Dst
     }
     # Copy src into build (or dest)
+    $BuildSrc = $Src + '/*'
 
     Copy-Item -Path $BuildSrc -Destination $Dst -Recurse -Force
 }
@@ -43,19 +66,6 @@ finally {
 
 ##### Increment Build Number and Replace in Files #####
 
-$Config = Get-Content config.json | ConvertFrom-Json
-
-$Version = $Config.VERSION
-$Build = $Config.BUILD
-$Interface = $Config.INTERFACE
-$script:Build++ 
-
-$Version = $Version + '.' + $Build
-
-Write-Host Build: $Version
-
-$Config.BUILD = $Build
-$Config | ConvertTo-Json | Out-File -FilePath config.json
 
 $old = '{{VERSION}}'
 $new = $Version
@@ -92,6 +102,7 @@ try {
 
     Copy-Item -Path $TocPath  -Destination $WowDst -Recurse -Force
     # Copy src into build (or dest)
+    $BuildDst = $Dst + '/*'
     Copy-Item -Path $BuildDst -Destination $WowDst -Recurse -Force
 }
 catch {
