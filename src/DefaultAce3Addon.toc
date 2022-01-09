@@ -2,11 +2,11 @@
 ## Version: {{VERSION}}
 ## X-License: All rights reserved.
 ## Notes: This AddOn does nothing
-## Author: Arazon
-## SavedVariables: AmmoniteDB
+## Author: Author
+## SavedVariables: DefaultAce3AddonDB
 
-# External code + initialization
+# External libs
 embeds.xml
 
 # Core 
-Ammonite.lua
+DefaultAce3Addon.lua

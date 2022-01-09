@@ -1,3 +1,3 @@
-# Ammonite
+# DefaultAce3Addon
 
-WoW TBC Ammo Manager
+Default Ace3 World of Warcraft Addon Boilerplate

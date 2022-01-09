@@ -1,6 +1,5 @@
-# Setup source and destination paths
 
-
+##### LOAD CONFIGS ######
 $Config = Get-Content config.json | ConvertFrom-Json
 
 $AppName = $Config.APP_NAME
@@ -28,6 +27,8 @@ $Dst = $Config.BUILD_DIR
 
 $TocFile = $AppName + '.toc'
 $TocPath = $Dst + '/' + $TocFile
+
+##### UPDATE INCREMENTED BUILD NUMBER ######
 
 $Config.BUILD = $Build
 $Config | ConvertTo-Json | Out-File -FilePath config.json
