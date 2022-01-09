@@ -6,15 +6,13 @@ $Dst = './build'
 $BuildSrc = $Src + '/*'
 $BuildDst = $Dst + '/*'
 
-$WowInstallDir = 'C:\'
+$WowInstallDir = 'C:\Program Files (x86)\World of Warcraft\_classic_\Interface\AddOns\'
 $WowDst = $WowInstallDir + $AppName
 
 $TocFile = $AppName + '.toc'
-$Build = $Dst + '/'
-$TocPath = $Build + $TocFile
-# Exclude: gitignore, build
-# Include: Ammonite.toc, init.lua, README, CHANGELOG, app/
+$TocPath = $Dst + '/' + $TocFile
 
+# BUILD 
 
 try {
     # Clean target folder
@@ -41,6 +39,42 @@ finally {
 }
 
 
+##### Increment Build Number and Replace in Files #####
+
+$Config = Get-Content config.json | ConvertFrom-Json
+
+$Version = $Config.VERSION
+$Build = $Config.BUILD
+$Interface = $Config.INTERFACE
+$script:Build++ 
+
+$Version = $Version + '.' + $Build
+
+Write-Host Build: $Version
+
+$Config.BUILD = $Build
+$Config | ConvertTo-Json | Out-File -FilePath config.json
+
+$old = '{{VERSION}}'
+$new = $Version
+
+Get-ChildItem $Config.BUILD_DIR -recurse -include *.toc, *.lua | 
+Select-Object -expand fullname |
+ForEach-Object {
+  (Get-Content $_) -replace $old, $new | Set-Content $_
+}
+
+$old = '{{INTERFACE}}'
+$new = $Interface
+
+Get-ChildItem $Config.BUILD_DIR -recurse -include *.toc | 
+Select-Object -expand fullname |
+ForEach-Object {
+  (Get-Content $_) -replace $old, $new | Set-Content $_
+}
+
+## INSTALL IN LOCAL WOW ADDONS ##
+
 try {
     # Clean target wow install folder
     $exists = Test-Path $WowDst
@@ -64,5 +98,3 @@ catch {
 finally {
     $Error.Clear()
 }
-
-
