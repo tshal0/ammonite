@@ -1,8 +1,8 @@
 <Ui >	
-	<Script file="DefaultAce3Addon.lua"/>
+	<Script file="Ammonite.lua"/>
 	<Frame parent="UIParent">
 		<Frames>
-			<Button name="DefaultAce3AddonButton" frameStrata="FULLSCREEN" toplevel="true">
+			<Button name="AmmoniteButton" frameStrata="FULLSCREEN" toplevel="true">
 				<Scripts>
 				</Scripts>
 			</Button>
