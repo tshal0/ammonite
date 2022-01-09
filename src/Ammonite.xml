@@ -1,0 +1,11 @@
+<Ui >	
+	<Script file="Ammonite.lua"/>
+	<Frame parent="UIParent">
+		<Frames>
+			<Button name="AmmoniteButton" frameStrata="FULLSCREEN" toplevel="true">
+				<Scripts>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>			
+</Ui>

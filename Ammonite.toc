@@ -1,7 +1,0 @@
-## Interface: 20501
-## Version: 4.10.10
-## X-License: All rights reserved.
-## Notes: This AddOn does nothing
-## Author: Arazon
-Ammonite.xml
-Ammonite.lua
