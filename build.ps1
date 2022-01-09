@@ -20,6 +20,8 @@ try {
     if ( $exists) {
         $CleanDst = $Dst + '/*'
         Remove-Item -Recurse -Force $CleanDst
+    } else {
+        New-Item -ItemType "directory" -Path $Dst
     }
     # Copy README, CHANGELOG
     $filter = [regex] ".*(README|CHANGELOG)"
