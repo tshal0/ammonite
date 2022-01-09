@@ -1,8 +1,10 @@
 # Setup source and destination paths
 $AppName = 'Ammonite'
 
-$Src = './src/*'
+$Src = './src'
 $Dst = './build'
+$BuildSrc = $Src + '/*'
+$BuildDst = $Dst + '/*'
 
 $WowInstallDir = 'C:\'
 $WowDst = $WowInstallDir + $AppName
@@ -10,15 +12,12 @@ $WowDst = $WowInstallDir + $AppName
 $TocFile = $AppName + '.toc'
 $Build = $Dst + '/'
 $TocPath = $Build + $TocFile
-$BuildPath = $Build + '*'
 # Exclude: gitignore, build
 # Include: Ammonite.toc, init.lua, README, CHANGELOG, app/
 
 
 try {
     # Clean target folder
-    # Get-ChildItem -Path $Dst -Include *.* -File -Recurse | ForEach-Object { $_.Delete()}
-
     $exists = Test-Path $Dst
     if ( $exists) {
         $CleanDst = $Dst + '/*'
@@ -32,7 +31,7 @@ try {
     }
     # Copy src into build (or dest)
 
-    Copy-Item -Path $Src -Destination $Dst -Recurse -Force
+    Copy-Item -Path $BuildSrc -Destination $Dst -Recurse -Force
 }
 catch {
     Write-Host $PSItem.Exception.Message -ForegroundColor RED
@@ -57,7 +56,7 @@ try {
 
     Copy-Item -Path $TocPath  -Destination $WowDst -Recurse -Force
     # Copy src into build (or dest)
-    Copy-Item -Path $BuildPath -Destination $WowDst -Recurse -Force
+    Copy-Item -Path $BuildDst -Destination $WowDst -Recurse -Force
 }
 catch {
     Write-Host $PSItem.Exception.Message -ForegroundColor RED
