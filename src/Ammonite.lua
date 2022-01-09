@@ -7,12 +7,20 @@ Ammonite =
 _G.Ammonite = Ammonite
 
 local LDB = LibStub("LibDataBroker-1.1",
-                    true)
-local LDBIcon = LibStub("LibDBIcon-1.0",
-                        true)
-
+                    true):NewDataObject(
+              "Ammonite!", {
+    type = "data source",
+    text = "Ammonite!",
+    icon = "Interface\\Icons\\INV_Chest_Cloth_17",
+    OnClick = function()
+      print(
+        "BUNNIES ARE TAKING OVER THE WORLD")
+    end
+  })
+local LDBIcon = LibStub("LibDBIcon-1.0")
 local defaults = {
   profile = {
+    minimap = {hide = false},
     modules = {
       ["*"] = {
         enabled = true,
@@ -28,9 +36,22 @@ local defaults = {
 function Ammonite:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New(
               "AmmoniteDB", defaults)
+  LDBIcon:Register("Ammonite!", LDB,
+                   self.db.profile
+                     .minimap)
+  self:RegisterChatCommand("bunnies",
+                           "CommandTheAmmonite")
   Ammonite:Print("Version: {{VERSION}}")
 end
-
+function Ammonite:CommandTheAmmonite()
+  self.db.profile.minimap.hide =
+    not self.db.profile.minimap.hide
+  if self.db.profile.minimap.hide then
+    LDBIcon:Hide("Ammonite!")
+  else
+    LDBIcon:Show("Ammonite!")
+  end
+end
 function Ammonite:OnEnable() end
 
 function Ammonite:OnDisable() end
