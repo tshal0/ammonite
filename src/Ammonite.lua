@@ -123,24 +123,27 @@ function Ammonite:UpdateAmmoCount()
   Ammonite.ammoCount.value = ammoCount
   local color = "00ff00"
   local message = "Ammo: " .. "|cff" .. color .. ("%.1f"):format(ammoCount)
-  Ammonite:Print(message)
 
-  local LSM = LibStub("LibSharedMedia-3.0");
-  local font = LSM:Fetch("font", "MeatEdition");
-  local _, class = UnitClass("player");
-  local color = RAID_CLASS_COLORS[class];
   if (not Ammonite.ammoCount.frame) then
     Ammonite.ammoCount = {}
-    Ammonite.ammoCount.frame = CreateFrame("Frame", nil, UIParent)
-    Ammonite.ammoCount.frame:SetWidth(1)
-    Ammonite.ammoCount.frame:SetHeight(5)
-    Ammonite.ammoCount.frame:SetPoint("CENTER", 0, 0)
-    Ammonite.ammoCount.textFrame = Ammonite.ammoCount.frame:CreateFontString(
-                                     Ammonite.ammoCount.frame, "OVERLAY",
-                                     "GameTooltipText")
-
-    Ammonite.ammoCount.textFrame:SetPoint("CENTER", 0, 0);
-    Ammonite.ammoCount.textFrame:SetTextColor(color.r, color.g, color.b);
+    local frame = CreateFrame("Frame", nil, UIParent)
+    frame:SetWidth(100)
+    frame:SetHeight(20)
+    frame:SetPoint("CENTER", 0, 0)
+    local textFrame = frame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+    textFrame:SetPoint("CENTER", 0, 0);
+    frame:SetMovable(true)
+    frame:RegisterForDrag("LeftButton")
+    frame:SetClampedToScreen(true)
+    frame:SetFrameStrata("HIGH")
+    frame:SetScript("OnMouseDown", frame.StartMoving)
+    frame:SetScript("OnMouseUp", frame.StopMovingOrSizing)
+    local tex = frame:CreateTexture("ARTWORK")
+    tex:SetAllPoints()
+    tex:SetColorTexture(1.0, 0.5, 0, 0.5)
+    Ammonite.ammoCount.frame = frame
+    Ammonite.ammoCount.textFrame = textFrame
+    -- Ammonite.ammoCount.textFrame:SetTextColor("000");
   end
   Ammonite.ammoCount.textFrame:SetText(message);
 end
