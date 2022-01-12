@@ -84,7 +84,7 @@ function Ammonite:InitOptions()
             name = "Lock Frames",
             type = "toggle",
             set = function(info, val) Ammonite:SetLocked(val) end,
-            get = function(info) return Ammonite.ammoCount.locked end
+            get = function(info) return Ammonite.db.profile.ammoCount.locked end
           },
           getPosition = {
             name = "Get Position",
@@ -147,12 +147,15 @@ function Ammonite:UpdateAmmoCount()
 end
 
 function Ammonite:CreateFrame()
-  if (not Ammonite.ammoCount) then
-    Ammonite.ammoCount = {value = 0, locked = true}
-  end
+  if (not Ammonite.ammoCount) then Ammonite.ammoCount = {value = 0} end
 
   if (not Ammonite.db.profile.ammoCount) then
-    Ammonite.db.profile.ammoCount = {xOfs = 0, yOfs = 0, relativeTo = 0}
+    Ammonite.db.profile.ammoCount = {
+      xOfs = 0,
+      yOfs = 0,
+      relativeTo = 0,
+      locked = true
+    }
   end
   if (not Ammonite.ammoCount.frame) then
     Ammonite.ammoCount = {}
@@ -205,14 +208,16 @@ local function StopMoving()
   Ammonite:SaveCurrentPosition()
 end
 local function StartMoving()
-  if (not Ammonite.ammoCount.locked) then
+  if (not Ammonite.db.profile.ammoCount.locked) then
     local frame = Ammonite.ammoCount.frame;
     frame:StartMoving()
   end
 end
 
 function Ammonite:SetLocked(val)
-  if (Ammonite.ammoCount.locked == nil) then Ammonite.ammoCount.locked = true end
+  if (Ammonite.db.profile.ammoCount.locked == nil) then
+    Ammonite.db.profile.ammoCount.locked = true
+  end
   if (val) then
     Ammonite:LockAmmoCount()
   else
@@ -223,7 +228,7 @@ end
 function Ammonite:UnlockAmmoCount()
   local frame = Ammonite.ammoCount.frame
 
-  Ammonite.ammoCount.locked = false;
+  Ammonite.db.profile.ammoCount.locked = false;
   if (Ammonite.ammoCount.textureFrame) then
     Ammonite.ammoCount.textureFrame:Show()
   else
@@ -232,7 +237,6 @@ function Ammonite:UnlockAmmoCount()
     tex:SetColorTexture(1.0, 0.5, 0, 0.5)
     Ammonite.ammoCount.textureFrame = tex
   end
-  
 
   frame:SetMovable(true)
   frame:RegisterForDrag("LeftButton")
@@ -243,11 +247,10 @@ end
 function Ammonite:LockAmmoCount()
   local frame = Ammonite.ammoCount.frame
 
-  Ammonite.ammoCount.locked = true;
+  Ammonite.db.profile.ammoCount.locked = true;
   if (Ammonite.ammoCount.textureFrame) then
     Ammonite.ammoCount.textureFrame:Hide()
   end
-  
 
   frame:SetMovable(false)
 
