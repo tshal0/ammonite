@@ -91,6 +91,12 @@ function Ammonite:InitOptions()
             type = "execute",
             func = function(info, val) Ammonite.ApplySettings() end
 
+          },
+          resetPosition = {
+            name = "Reset Position",
+            type = "execute",
+            func = function(info, val) Ammonite.ResetCurrentPosition() end
+
           }
         }
       }
@@ -132,8 +138,17 @@ function Ammonite:UpdateAmmoCount()
   Ammonite.ammoCount.textFrame:SetText(message);
 end
 
+local function StopMoving()
+  local frame = Ammonite.ammoCount.frame;
+  frame:StopMovingOrSizing()
+  Ammonite:SaveCurrentPosition()
+end
+
 function Ammonite:CreateFrame()
   if (not Ammonite.ammoCount) then Ammonite.ammoCount = {value = 0} end
+  if (not Ammonite.db.profile.ammoCount) then
+    Ammonite.db.profile.ammoCount = {xOfs = 0, yOfs = 0, relativeTo = 0}
+  end
   if (not Ammonite.ammoCount.frame) then
     Ammonite.ammoCount = {}
     local frame = CreateFrame("Frame", nil, UIParent)
@@ -143,7 +158,7 @@ function Ammonite:CreateFrame()
     frame:SetClampedToScreen(true)
     frame:SetFrameStrata("HIGH")
     frame:SetScript("OnMouseDown", frame.StartMoving)
-    frame:SetScript("OnMouseUp", frame.StopMovingOrSizing)
+    frame:SetScript("OnMouseUp", StopMoving)
     local textFrame = frame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     local tex = frame:CreateTexture("ARTWORK")
     tex:SetAllPoints()
@@ -156,13 +171,35 @@ function Ammonite:CreateFrame()
   Ammonite:ApplySettings()
 end
 
+function Ammonite:SaveCurrentPosition()
+  local frame = Ammonite.ammoCount.frame
+  local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint()
+
+  Ammonite.db.profile.ammoCount.xOfs = xOfs
+  Ammonite.db.profile.ammoCount.yOfs = yOfs
+  Ammonite.db.profile.ammoCount.relativeTo = relativeTo
+end
+function Ammonite:ResetCurrentPosition()
+  local frame = Ammonite.ammoCount.frame
+  local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint()
+
+  Ammonite.db.profile.ammoCount.xOfs = 0
+  Ammonite.db.profile.ammoCount.yOfs = 0
+  Ammonite.db.profile.ammoCount.relativeTo = "CENTER"
+end
 function Ammonite:ApplySettings()
   local frame = Ammonite.ammoCount.frame
   local textFrame = Ammonite.ammoCount.textFrame
   frame:SetWidth(100)
   frame:SetHeight(20)
-  frame:SetPoint("CENTER", 0, 0)
-  textFrame:SetPoint("CENTER", 0, 0);
+
+  local xOfs = Ammonite.db.profile.ammoCount.xOfs
+  local yOfs = Ammonite.db.profile.ammoCount.yOfs
+  local relativeTo = Ammonite.db.profile.ammoCount.relativeTo
+  
+  textFrame:SetPoint("CENTER", 0, 0)
+  frame:SetPoint("CENTER", xOfs, yOfs)
+  -- textFrame:SetPoint("CENTER", xOfs, yOfs)
 end
 
 function Ammonite:GetCurrentPosition()
