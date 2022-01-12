@@ -80,10 +80,16 @@ function Ammonite:InitOptions()
               return Ammonite.db.profile.modules.ammoCounter.enabled
             end
           },
-          getAmmoCount = {
-            name = "Get Ammo Count",
+          getPosition = {
+            name = "Get Position",
             type = "execute",
-            func = function(info, val) Ammonite.UpdateAmmoCount() end
+            func = function(info, val) Ammonite.GetCurrentPosition() end
+
+          },
+          applySettings = {
+            name = "Apply Settings",
+            type = "execute",
+            func = function(info, val) Ammonite.ApplySettings() end
 
           }
         }
@@ -100,6 +106,7 @@ function Ammonite:OnInitialize()
   self.db = AceDB:New("AmmoniteDB", defaults)
   LDBIcon:Register("Ammonite", ALDB, self.db.profile.minimap)
   Ammonite.InitOptions()
+  Ammonite:CreateFrame()
   Ammonite.RegisterAmmoEvents()
   Ammonite:Print("Version: {{VERSION}}")
 end
@@ -119,31 +126,52 @@ function Ammonite:UpdateAmmoCount()
   if ((ammoCount == 1) and (not GetInventoryItemTexture("player", ammoSlot))) then
     ammoCount = 0;
   end
-  if (not Ammonite.ammoCount) then Ammonite.ammoCount = {value = 0} end
   Ammonite.ammoCount.value = ammoCount
   local color = "00ff00"
   local message = "Ammo: " .. "|cff" .. color .. ("%.1f"):format(ammoCount)
+  Ammonite.ammoCount.textFrame:SetText(message);
+end
 
+function Ammonite:CreateFrame()
+  if (not Ammonite.ammoCount) then Ammonite.ammoCount = {value = 0} end
   if (not Ammonite.ammoCount.frame) then
     Ammonite.ammoCount = {}
     local frame = CreateFrame("Frame", nil, UIParent)
-    frame:SetWidth(100)
-    frame:SetHeight(20)
-    frame:SetPoint("CENTER", 0, 0)
-    local textFrame = frame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-    textFrame:SetPoint("CENTER", 0, 0);
+
     frame:SetMovable(true)
     frame:RegisterForDrag("LeftButton")
     frame:SetClampedToScreen(true)
     frame:SetFrameStrata("HIGH")
     frame:SetScript("OnMouseDown", frame.StartMoving)
     frame:SetScript("OnMouseUp", frame.StopMovingOrSizing)
+    local textFrame = frame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     local tex = frame:CreateTexture("ARTWORK")
     tex:SetAllPoints()
     tex:SetColorTexture(1.0, 0.5, 0, 0.5)
     Ammonite.ammoCount.frame = frame
     Ammonite.ammoCount.textFrame = textFrame
+
     -- Ammonite.ammoCount.textFrame:SetTextColor("000");
   end
-  Ammonite.ammoCount.textFrame:SetText(message);
+  Ammonite:ApplySettings()
+end
+
+function Ammonite:ApplySettings()
+  local frame = Ammonite.ammoCount.frame
+  local textFrame = Ammonite.ammoCount.textFrame
+  frame:SetWidth(100)
+  frame:SetHeight(20)
+  frame:SetPoint("CENTER", 0, 0)
+  textFrame:SetPoint("CENTER", 0, 0);
+end
+
+function Ammonite:GetCurrentPosition()
+  local frame = Ammonite.ammoCount.frame
+  local textFrame = Ammonite.ammoCount.textFrame
+  local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint()
+  Ammonite:Print(point)
+  Ammonite:Print(relativeTo)
+  Ammonite:Print(relativePoint)
+  Ammonite:Print(xOfs)
+  Ammonite:Print(yOfs)
 end
