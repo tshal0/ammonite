@@ -132,6 +132,7 @@ function Ammonite:CreateFrame()
 
     -- Ammonite.ammoCount.textFrame:SetTextColor("000");
   end
+  if (not Ammonite.db.profile.ammoCount.locked) then Ammonite:UnlockAmmoCount() end
   Ammonite:ApplySettings()
 end
 
