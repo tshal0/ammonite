@@ -80,6 +80,12 @@ function Ammonite:InitOptions()
               return Ammonite.db.profile.modules.ammoCounter.enabled
             end
           },
+          lock = {
+            name = "Lock Frames",
+            type = "toggle",
+            set = function(info, val) Ammonite:SetLocked(val) end,
+            get = function(info) return Ammonite.ammoCount.locked end
+          },
           getPosition = {
             name = "Get Position",
             type = "execute",
@@ -95,7 +101,9 @@ function Ammonite:InitOptions()
           resetPosition = {
             name = "Reset Position",
             type = "execute",
-            func = function(info, val) Ammonite.ResetCurrentPosition() end
+            func = function(info, val)
+              Ammonite.ResetCurrentPosition()
+            end
 
           }
         }
@@ -138,31 +146,21 @@ function Ammonite:UpdateAmmoCount()
   Ammonite.ammoCount.textFrame:SetText(message);
 end
 
-local function StopMoving()
-  local frame = Ammonite.ammoCount.frame;
-  frame:StopMovingOrSizing()
-  Ammonite:SaveCurrentPosition()
-end
-
 function Ammonite:CreateFrame()
-  if (not Ammonite.ammoCount) then Ammonite.ammoCount = {value = 0} end
+  if (not Ammonite.ammoCount) then
+    Ammonite.ammoCount = {value = 0, locked = true}
+  end
+
   if (not Ammonite.db.profile.ammoCount) then
     Ammonite.db.profile.ammoCount = {xOfs = 0, yOfs = 0, relativeTo = 0}
   end
   if (not Ammonite.ammoCount.frame) then
     Ammonite.ammoCount = {}
     local frame = CreateFrame("Frame", nil, UIParent)
-
-    frame:SetMovable(true)
-    frame:RegisterForDrag("LeftButton")
-    frame:SetClampedToScreen(true)
     frame:SetFrameStrata("HIGH")
-    frame:SetScript("OnMouseDown", frame.StartMoving)
-    frame:SetScript("OnMouseUp", StopMoving)
+
     local textFrame = frame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-    local tex = frame:CreateTexture("ARTWORK")
-    tex:SetAllPoints()
-    tex:SetColorTexture(1.0, 0.5, 0, 0.5)
+
     Ammonite.ammoCount.frame = frame
     Ammonite.ammoCount.textFrame = textFrame
 
@@ -196,10 +194,67 @@ function Ammonite:ApplySettings()
   local xOfs = Ammonite.db.profile.ammoCount.xOfs
   local yOfs = Ammonite.db.profile.ammoCount.yOfs
   local relativeTo = Ammonite.db.profile.ammoCount.relativeTo
-  
+
   textFrame:SetPoint("CENTER", 0, 0)
   frame:SetPoint("CENTER", xOfs, yOfs)
   -- textFrame:SetPoint("CENTER", xOfs, yOfs)
+end
+local function StopMoving()
+  local frame = Ammonite.ammoCount.frame;
+  frame:StopMovingOrSizing()
+  Ammonite:SaveCurrentPosition()
+end
+local function StartMoving()
+  if (not Ammonite.ammoCount.locked) then
+    local frame = Ammonite.ammoCount.frame;
+    frame:StartMoving()
+  end
+end
+
+function Ammonite:SetLocked(val)
+  if (Ammonite.ammoCount.locked == nil) then Ammonite.ammoCount.locked = true end
+  if (val) then
+    Ammonite:LockAmmoCount()
+  else
+    Ammonite.UnlockAmmoCount()
+  end
+end
+
+function Ammonite:UnlockAmmoCount()
+  local frame = Ammonite.ammoCount.frame
+
+  Ammonite.ammoCount.locked = false;
+  if (Ammonite.ammoCount.textureFrame) then
+    Ammonite.ammoCount.textureFrame:Show()
+  else
+    local tex = frame:CreateTexture("ARTWORK")
+    tex:SetAllPoints()
+    tex:SetColorTexture(1.0, 0.5, 0, 0.5)
+    Ammonite.ammoCount.textureFrame = tex
+  end
+  
+
+  frame:SetMovable(true)
+  frame:RegisterForDrag("LeftButton")
+  frame:SetClampedToScreen(true)
+  frame:SetScript("OnMouseDown", StartMoving)
+  frame:SetScript("OnMouseUp", StopMoving)
+end
+function Ammonite:LockAmmoCount()
+  local frame = Ammonite.ammoCount.frame
+
+  Ammonite.ammoCount.locked = true;
+  if (Ammonite.ammoCount.textureFrame) then
+    Ammonite.ammoCount.textureFrame:Hide()
+  end
+  
+
+  frame:SetMovable(false)
+
+  frame:SetClampedToScreen(true)
+
+  frame:SetScript("OnMouseDown", StartMoving)
+  frame:SetScript("OnMouseUp", StopMoving)
 end
 
 function Ammonite:GetCurrentPosition()
