@@ -43,60 +43,23 @@ function Ammonite:InitOptions()
     childGroups = "tree",
     plugins = {},
     args = {
-      enable = {
-        name = "Enable",
-        desc = "Enables / disables the addon",
+      lock = {
+        name = "Lock Frames",
         type = "toggle",
-        set = function(info, val) Ammonite.enabled = val end,
-        get = function(info) return Ammonite.enabled end
-      },
-      minimap = {
-        name = "Minimap",
-        type = "group",
-        args = {
-          show = {
-            name = "Show Minimap Button",
-            type = "toggle",
-            set = function(info, val)
-              Ammonite.db.profile.minimap.visible = val
-            end,
-            get = function(info)
-              return Ammonite.db.profile.minimap.visible
-            end
-          }
-        }
+        set = function(info, val) Ammonite:SetLocked(val) end,
+        get = function(info) return Ammonite.db.profile.ammoCount.locked end
       },
       ac = {
         name = "AmmoCounter",
         type = "group",
         args = {
-          enable = {
-            name = "Enable AmmoCounter",
-            type = "toggle",
-            set = function(info, val)
-              Ammonite.db.profile.modules.ammoCounter.enabled = val
-            end,
-            get = function(info)
-              return Ammonite.db.profile.modules.ammoCounter.enabled
-            end
-          },
           lock = {
             name = "Lock Frames",
             type = "toggle",
             set = function(info, val) Ammonite:SetLocked(val) end,
-            get = function(info) return Ammonite.db.profile.ammoCount.locked end
-          },
-          getPosition = {
-            name = "Get Position",
-            type = "execute",
-            func = function(info, val) Ammonite.GetCurrentPosition() end
-
-          },
-          applySettings = {
-            name = "Apply Settings",
-            type = "execute",
-            func = function(info, val) Ammonite.ApplySettings() end
-
+            get = function(info)
+              return Ammonite.db.profile.ammoCount.locked
+            end
           },
           resetPosition = {
             name = "Reset Position",
@@ -187,6 +150,7 @@ function Ammonite:ResetCurrentPosition()
   Ammonite.db.profile.ammoCount.xOfs = 0
   Ammonite.db.profile.ammoCount.yOfs = 0
   Ammonite.db.profile.ammoCount.relativeTo = "CENTER"
+  Ammonite:ApplySettings()
 end
 function Ammonite:ApplySettings()
   local frame = Ammonite.ammoCount.frame
